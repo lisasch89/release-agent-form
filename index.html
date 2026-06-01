@@ -1,0 +1,1143 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#fff;font-family:Inter,sans-serif;color:#0D0A16;}
+.app{max-width:760px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+.logo-bar{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem;}
+.logo-mark{width:28px;height:28px;background:#391E84;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.logo-name{font-family:'Source Serif 4',serif;font-size:18px;font-weight:400;color:#0D0A16;letter-spacing:-0.02em;}
+.logo-name em{font-style:italic;font-weight:600;color:#391E84;}
+.prog{display:flex;align-items:center;margin-bottom:2rem;padding-top:0.25rem;}
+.ps{display:flex;align-items:center;gap:7px;font-size:12px;color:#aaa;padding-right:4px;}
+.ps.active{color:#391E84;font-weight:600;}
+.ps.done{color:#524C62;}
+.pd{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.ps.active .pd{background:#391E84;border-color:#391E84;color:white;}
+.ps.done .pd{background:#5BD0A2;border-color:#5BD0A2;color:white;font-size:9px;}
+.pl{flex:1;height:1px;background:#E8E5F0;margin:0 6px;}
+.card{background:#fff;border:1px solid #E8E5F0;border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
+.sec-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#aaa;margin-bottom:.75rem;}
+.divider{height:1px;background:#E8E5F0;margin:1.25rem 0;}
+.field-group{margin-bottom:1.25rem;}
+.field-group:last-child{margin-bottom:0;}
+.fl{font-size:12px;font-weight:600;color:#524C62;margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.fl .req{color:#9773FF;}
+.fh{font-size:11px;color:#aaa;margin-top:4px;line-height:1.5;}
+.fh strong{color:#524C62;font-weight:600;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+input[type=text],textarea,select{width:100%;font-family:Inter,sans-serif;font-size:13px;color:#0D0A16;background:#F2F0F7;border:1px solid #E8E5F0;border-radius:10px;padding:9px 13px;outline:none;resize:vertical;transition:border-color 0.15s;}
+input[type=text]:focus,textarea:focus,select:focus{border-color:#9773FF;background:#fff;}
+select{resize:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+textarea.s{min-height:110px;line-height:1.6;}
+textarea.m{min-height:140px;line-height:1.6;}
+textarea.l{min-height:200px;line-height:1.6;}
+.rt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.rt-btn{border-radius:10px;padding:12px;border:1.5px solid #E8E5F0;background:#F2F0F7;cursor:pointer;text-align:left;transition:all 0.15s;}
+.rt-btn .rt-name{font-size:13px;font-weight:600;color:#0D0A16;margin-bottom:3px;}
+.rt-btn .rt-desc{font-size:11px;color:#888;line-height:1.4;}
+.rt-btn.selected{background:#E9E1FF;border-color:#9773FF;}
+.rt-btn.selected .rt-name{color:#391E84;}
+.url-list{display:flex;flex-direction:column;gap:6px;}
+.url-row{display:flex;gap:6px;align-items:center;}
+.url-row input{flex:1;}
+.url-add-btn{padding:8px 14px;border-radius:8px;border:1px solid #E8E5F0;background:#F2F0F7;font-family:Inter,sans-serif;font-size:12px;font-weight:600;color:#524C62;cursor:pointer;white-space:nowrap;transition:all 0.15s;flex-shrink:0;}
+.url-add-btn:hover{border-color:#9773FF;color:#391E84;}
+.url-remove-btn{background:none;border:none;color:#aaa;cursor:pointer;font-size:18px;padding:0 4px;flex-shrink:0;}
+.url-remove-btn:hover{color:#91361D;}
+.gen-btn{width:100%;padding:13px;border-radius:30px;border:none;background:#391E84;color:white;font-family:Inter,sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity 0.15s;margin-top:.5rem;}
+.gen-btn:hover{opacity:0.88;}
+.back-btn{padding:11px 22px;border-radius:30px;border:1px solid #E8E5F0;background:#F2F0F7;font-family:Inter,sans-serif;font-size:13px;font-weight:600;color:#524C62;cursor:pointer;}
+.loading-card{display:none;text-align:center;padding:3rem 1rem;}
+.loading-card.show{display:block;}
+.spinner{width:30px;height:30px;border:2.5px solid #E9E1FF;border-top-color:#391E84;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lm{font-size:13px;color:#524C62;}
+.output-wrap{display:none;}
+.output-wrap.show{display:block;}
+.out-tabs{display:flex;gap:4px;margin-bottom:1rem;}
+.out-tab{padding:6px 16px;border-radius:8px;border:1px solid #E8E5F0;background:#F2F0F7;font-family:Inter,sans-serif;font-size:12px;font-weight:600;color:#524C62;cursor:pointer;transition:all 0.15s;}
+.out-tab.active{background:#391E84;color:white;border-color:#391E84;}
+.doc-card{background:#fff;border:1px solid #E8E5F0;border-radius:16px;overflow:hidden;}
+.doc-top{padding:.875rem 1.25rem;border-bottom:1px solid #E8E5F0;display:flex;align-items:center;justify-content:space-between;}
+.doc-meta{display:flex;align-items:center;gap:8px;}
+.dbadge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.db-freshdesk{background:#E6F3ED;color:#196F4D;}
+.db-slack{background:#E9E1FF;color:#391E84;}
+.doc-name{font-size:13px;font-weight:600;color:#0D0A16;}
+.copy-btn{padding:5px 12px;border-radius:8px;border:1px solid #E8E5F0;background:transparent;font-family:Inter,sans-serif;font-size:11px;color:#524C62;cursor:pointer;transition:all 0.15s;}
+.copy-btn:hover{border-color:#9773FF;color:#391E84;}
+.doc-body{padding:1.25rem 1.5rem;font-size:13px;line-height:1.8;color:#0D0A16;white-space:pre-wrap;max-height:480px;overflow-y:auto;}
+.note-bar{background:#E6F3ED;border:1px solid #BAE8D5;border-radius:10px;padding:10px 14px;font-size:12px;color:#196F4D;margin-bottom:1rem;}
+.note-bar strong{font-weight:700;}
+.bot-row{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;}
+.bot-btn{padding:9px 16px;border-radius:10px;border:1px solid #E8E5F0;background:#F2F0F7;font-family:Inter,sans-serif;font-size:12px;font-weight:600;color:#524C62;cursor:pointer;transition:all 0.15s;}
+.bot-btn:hover{border-color:#9773FF;color:#391E84;background:#E9E1FF;}
+.restart{display:block;margin:1.5rem auto 0;background:none;border:none;font-size:12px;color:#aaa;cursor:pointer;font-family:Inter,sans-serif;text-decoration:underline;}
+.hidden{display:none!important;}
+.preview-channel-card{background:#fff;border:1px solid #E8E5F0;border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.875rem;}
+.preview-channel-head{display:flex;align-items:center;gap:10px;padding-bottom:0.75rem;margin-bottom:0.875rem;border-bottom:1px solid #E8E5F0;}
+.preview-channel-head .pc-emoji{font-size:22px;}
+.preview-channel-head .pc-name{font-weight:600;color:#391E84;font-size:14px;}
+.preview-channel-head .pc-sub{font-size:12px;color:#9d98ad;line-height:1.4;}
+.preview-content{background:#FAFAFB;border:1px solid #E8E5F0;border-radius:8px;padding:0.875rem 1rem;font-family:Inter,sans-serif;font-size:13px;line-height:1.55;color:#0D0A16;white-space:pre-wrap;word-wrap:break-word;max-height:420px;overflow-y:auto;}
+.preview-content strong{font-weight:700;color:#0D0A16;}
+.preview-content em{font-style:italic;color:#524C62;}
+.preview-content .mention{color:#391E84;background:#E8E5F0;padding:0 4px;border-radius:3px;font-weight:500;}
+.preview-note{background:#F5F2FF;border:1px solid #D9CFFA;border-radius:8px;padding:0.625rem 0.875rem;margin-bottom:1rem;font-size:12px;color:#524C62;line-height:1.5;}
+.post-now-btn{background:#5BD0A2!important;border:1px solid #5BD0A2!important;color:#fff;}
+.post-now-btn:hover{background:#3FBE89!important;border-color:#3FBE89!important;}
+.handle-input-wrap{position:relative;}
+.handle-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #E8E5F0;border-radius:10px;box-shadow:0 6px 24px rgba(57,30,132,0.10);max-height:260px;overflow-y:auto;z-index:50;display:none;margin-top:4px;}
+.handle-dropdown.show{display:block;}
+.handle-option{padding:8px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;border-bottom:1px solid #F2F0F7;}
+.handle-option:last-child{border-bottom:none;}
+.handle-option:hover,.handle-option.focused{background:#E9E1FF;}
+.handle-option .handle-id{font-weight:600;color:#391E84;font-family:Inter,sans-serif;}
+.handle-option .handle-name{color:#888;font-size:12px;text-align:right;}
+.handle-empty{padding:10px 12px;font-size:12px;color:#9d98ad;font-style:italic;}
+.screenshots-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0.5rem;}
+.screenshots-list:empty{display:none;}
+.screenshot-thumb{position:relative;width:84px;height:84px;border-radius:8px;border:1px solid #E8E5F0;background:#F2F0F7 center/cover no-repeat;overflow:hidden;cursor:grab;}
+.screenshot-thumb.dragging{opacity:0.4;cursor:grabbing;}
+.screenshot-thumb.drag-over{border-color:#9773FF;box-shadow:0 0 0 2px rgba(151,115,255,0.3);}
+.screenshot-thumb .thumb-remove{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(13,10,22,0.78);color:#fff;border:none;font-size:13px;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.screenshot-thumb .thumb-remove:hover{background:#91361D;}
+.screenshot-thumb .thumb-name{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(to top,rgba(13,10,22,0.75),transparent);color:#fff;font-size:10px;padding:14px 4px 3px;line-height:1.2;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.preview-thumbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:0.625rem;padding-top:0.625rem;border-top:1px solid #E8E5F0;}
+.preview-thumbs .preview-thumb{width:64px;height:64px;border-radius:6px;background:#F2F0F7 center/cover no-repeat;border:1px solid #E8E5F0;}
+.preview-thumbs-label{font-size:11px;color:#9d98ad;margin-top:0.625rem;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;}
+</style>
+</head><body>
+<div class="app" id="app">
+  <div class="logo-bar">
+    <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" width="16" height="16"><path d="M8 2L14 12H2L8 2Z" fill="white" opacity="0.9"/></svg></div>
+    <span class="logo-name">Release <em>Agent</em></span>
+  </div>
+
+  <!-- STEP 0: PRE-FILL -->
+  <div id="step0">
+    <div class="card">
+      <div class="sec-label">Quick start - paste your notes</div>
+      <div class="fl" style="margin-bottom:6px;">What are you releasing?</div>
+      <div class="fh" style="margin-bottom:12px;">Paste anything you have - Linear description, meeting notes, Slack thread, bullet points. The agent extracts what it can and pre-fills the form. You review and fix any gaps.</div>
+      <textarea class="s" id="prefill-input" style="min-height:200px;width:100%;" placeholder="e.g. We shipped the new absence approval flow. Managers can approve/reject from email without logging in. Works for single and multi-day absences. Custom absence types coming later..."></textarea>
+      <div id="prefill-error" style="color:#D85A30;font-size:12px;margin-top:8px;display:none;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;">
+      <button class="back-btn" onclick="skipPrefill()" style="font-size:12px;">Skip - fill manually</button>
+      <button class="gen-btn" style="width:auto;padding:11px 28px;" onclick="runPrefill()">Pre-fill form &rarr;</button>
+    </div>
+    <div id="prefill-loading" class="hidden" style="text-align:center;padding:2rem 0;">
+      <div class="spinner" style="margin:0 auto 0.75rem;"></div>
+      <div style="font-size:13px;color:#524C62;" id="prefill-lm">Extracting release details...</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="prog hidden" id="prog">
+    <div class="ps active" id="ps1"><div class="pd">1</div><span>What we built</span></div>
+    <div class="pl"></div>
+    <div class="ps" id="ps2"><div class="pd">2</div><span>Context &amp; publish</span></div>
+    <div class="pl"></div>
+    <div class="ps" id="ps3"><div class="pd">3</div><span>Preview &amp; post</span></div>
+  </div>
+
+  <!-- STEP 1: RELEASE TYPE + CONTENT -->
+  <div id="step1" class="hidden">
+    <div class="card">
+      <div class="sec-label">Who is this release for?</div>
+      <div class="rt-grid" style="margin-bottom:1.25rem;">
+        <div class="rt-btn selected" data-rt="ga" onclick="selectRT(this)">
+          <div class="rt-name">Customers</div>
+          <div class="rt-desc">General release. Posts to #product-news and #product-release. Creates a Freshdesk release note draft for Team X.</div>
+        </div>
+        <div class="rt-btn" data-rt="beta" onclick="selectRT(this)">
+          <div class="rt-name">Beta customers</div>
+          <div class="rt-desc">Selected customers only. Posts to #product-news and #product-release. No release note draft yet.</div>
+        </div>
+        <div class="rt-btn" data-rt="internal" onclick="selectRT(this)">
+          <div class="rt-name">Internal only</div>
+          <div class="rt-desc">Not reaching customers yet. Posts to #product-news and #product-release for coordination.</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="sec-label">Release details</div>
+      <div class="field-group" style="margin-bottom:1.25rem;">
+        <div class="fl">Release title <span class="req">*</span></div>
+        <input type="text" id="f-title" placeholder="e.g. Competence Module API"/>
+      </div>
+      <div class="field-group">
+        <div class="fl">The problem we solve <span class="req">*</span></div>
+        <textarea class="s" id="f-problem" placeholder="What pain point or friction does this address? What did customers have to do before this existed?"></textarea>
+        <div class="fh">Lead with the problem. This becomes the opening of all customer-facing communication.</div>
+      </div>
+      <div class="field-group">
+        <div class="fl">What we have built <span class="req">*</span></div>
+        <textarea class="l" id="f-what" placeholder="Describe how the feature, workflow, setting, or integration actually works. Be specific about capabilities - what can users do, how do they access it, what does it look like?"></textarea>
+        <div class="fh">The more detail the better. This is the factual foundation the Agent uses to write both outputs.</div>
+      </div>
+      <div class="field-group">
+        <div class="fl">What we do not solve</div>
+        <textarea class="s" id="f-limits" placeholder="Known limitations, deliberate scope decisions, specific use cases not covered in this release..."></textarea>
+        <div class="fh">Be honest and specific. If next steps are known (planned, in discovery) include them.</div>
+      </div>
+      <div class="field-group">
+        <div class="fl">Who we built this for <span class="req">*</span></div>
+        <textarea class="s" id="f-whom" placeholder="User types: HR admin, manager, employee. Customer segments, real-world examples of who this helps most..."></textarea>
+      </div>
+      <div class="divider"></div>
+      <div class="field-row">
+        <div class="field-group" style="margin-bottom:0;">
+          <div class="fl">Tier <span class="req">*</span></div>
+          <select id="f-tier" onchange="updateFdUrlLabel()">
+            <option value="">Select tier</option>
+            <option value="t1">T1 - New feature</option>
+            <option value="t2">T2 - Major improvement</option>
+            <option value="t3">T3 - Minor improvement</option>
+            <option value="t4">T4 - Technical</option>
+          </select>
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <div class="fl">Responsible team <span class="req">*</span></div>
+          <select id="f-team">
+            <option value="">Select team</option>
+            <option value="Lifecycle &amp; Access">Lifecycle &amp; Access</option>
+            <option value="Time &amp; Pay">Time &amp; Pay</option>
+            <option value="AI Platform &amp; Automation">AI Platform &amp; Automation</option>
+            <option value="Performance &amp; Development">Performance &amp; Development</option>
+            <option value="Apps &amp; Channels">Apps &amp; Channels</option>
+            <option value="API &amp; Integrations">API &amp; Integrations</option>
+            <option value="Suite Services &amp; Tooling">Suite Services &amp; Tooling</option>
+            <option value="Expert">Expert</option>
+            <option value="Handbooks">Handbooks</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:14px;margin-bottom:0;">
+        <div class="fl">Your Slack handle <span class="req">*</span></div>
+        <input type="text" id="f-postedby" placeholder="@lisa.schmelz" autocomplete="off"/>
+        <div class="fh">Shown in the Slack announcement so colleagues know who to ask about this release.</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button class="back-btn" onclick="goStep0()">&#8592; Back</button>
+      <button class="gen-btn" style="width:auto;padding:11px 28px;" onclick="goStep2()">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: CONTEXT + GENERATE -->
+  <div id="step2" class="hidden">
+    <div class="card">
+      <div class="sec-label">Internal context</div>
+      <div class="field-group">
+        <div class="fl">Why this matters <span style="color:#aaa;font-weight:400;">(commercial teams)</span></div>
+        <textarea class="s" id="f-commercial" placeholder="Impact and relevance for Sales, CS, PS: deals unlocked, adoption opportunities, competitive positioning..."></textarea>
+        <div class="fh"><strong>Internal only.</strong> Never appears in customer-facing output. Helps Sales, CS, and PMM position and communicate the release.</div>
+      </div>
+      <div class="field-group">
+        <div class="fl">Other information (optional)</div>
+        <textarea class="s" id="f-other" placeholder="Migration notes, setup required, rollout order, dependencies, follow-up planned..."></textarea>
+      </div>
+      <div class="divider"></div>
+      <div class="sec-label">Resources &amp; links</div>
+      <div class="field-group">
+        <div class="fl" id="fl-fd-urls">Help center articles &amp; documentation</div>
+        <div class="url-list" id="fd-urls">
+          <div class="url-row">
+            <input type="text" placeholder="https://mysupport.simployer.com/..." class="fd-url-input"/>
+            <button class="url-add-btn" onclick="addURL()">+ Add another</button>
+          </div>
+        </div>
+        <div class="fh">Paste URLs to relevant help center articles. Shared in the Slack post and included in the release note. <strong>This field is for sharing the link</strong> so it gets distributed.</div>
+      </div>
+      <div class="field-group">
+        <div class="fl">API / technical docs URL (optional)</div>
+        <input type="text" id="f-apidoc" placeholder="https://docs.alexishr.com/..."/>
+      </div>
+      <div class="divider"></div>
+      <div class="field-group">
+        <div class="fl">Team credits</div>
+        <input type="text" id="f-credits" placeholder="e.g. @matteo.ferioli, @micky.rivera" autocomplete="off"/>
+        <div class="fh">Tag one or more teammates — start typing <strong>@</strong> to pick from Slack, then <strong>add a comma</strong> and start the next one. Recognised in the Slack post; not included in the customer-facing Freshdesk release note.</div>
+      </div>
+      <div class="divider"></div>
+      <div class="field-group" style="margin-bottom:0;">
+        <div class="fl">Screenshots (optional)</div>
+        <div id="screenshots-list" class="screenshots-list"></div>
+        <button type="button" class="url-add-btn" id="add-screenshot-btn" onclick="document.getElementById('f-images-input').click()">+ Add screenshot</button>
+        <input type="file" id="f-images-input" accept="image/*" multiple style="display:none" onchange="onImagesPicked(event)"/>
+        <div class="fh">Attached as thread replies under both Slack posts. Up to 4 images, max 5&nbsp;MB each. PNG / JPG / GIF / WebP.</div>
+      </div>
+    </div>
+    <!-- ACCESS CONFIRMATIONS (shown for internal + beta) -->
+    <div id="access-checks" class="card" style="display:none;border-color:#F5C542;background:#FFFBEB;">
+      <div class="sec-label" style="color:#91680A;">Confirm access before publishing</div>
+      <div id="access-check-internal" style="display:none;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#0D0A16;line-height:1.5;">
+          <input type="checkbox" id="chk-internal" style="margin-top:3px;accent-color:#391E84;width:16px;height:16px;flex-shrink:0;" onchange="updateGenerateBtn()"/>
+          <span>I confirm that dedicated testers from <strong>CC, PS, CS, and Sales</strong> have been given access to this feature - or it has been enabled for all Simployer employees.</span>
+        </label>
+      </div>
+      <div id="access-check-beta" style="display:none;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#0D0A16;line-height:1.5;margin-bottom:10px;">
+          <input type="checkbox" id="chk-beta-internal" style="margin-top:3px;accent-color:#391E84;width:16px;height:16px;flex-shrink:0;" onchange="updateGenerateBtn()"/>
+          <span>I confirm that dedicated testers from <strong>CC, PS, CS, and Sales</strong> have been given access - or it has been enabled for all Simployer employees.</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#0D0A16;line-height:1.5;">
+          <input type="checkbox" id="chk-beta-customers" style="margin-top:3px;accent-color:#391E84;width:16px;height:16px;flex-shrink:0;" onchange="updateGenerateBtn()"/>
+          <span>I confirm that the agreed <strong>beta customer segment</strong> has been given access to this feature.</span>
+        </label>
+      </div>
+      <div id="access-check-ga" style="display:none;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#0D0A16;line-height:1.5;margin-bottom:10px;">
+          <input type="checkbox" id="chk-ga-internal" style="margin-top:3px;accent-color:#391E84;width:16px;height:16px;flex-shrink:0;" onchange="updateGenerateBtn()"/>
+          <span>I confirm that <strong>all Simployer employees</strong> have been given access to this feature.</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#0D0A16;line-height:1.5;">
+          <input type="checkbox" id="chk-ga-customers" style="margin-top:3px;accent-color:#391E84;width:16px;height:16px;flex-shrink:0;" onchange="updateGenerateBtn()"/>
+          <span>I confirm that <strong>all relevant customers</strong> have been given access to this feature.</span>
+        </label>
+      </div>
+    </div>
+    <div id="coordination-block" class="field-group" style="margin-top:1.25rem;padding:1rem 1.1rem;background:#F5F2FF;border:1px solid #D9CFFA;border-radius:10px;">
+      <div class="fl" style="display:flex;align-items:center;gap:8px;margin-bottom:4px;color:#391E84;">
+        <span style="font-size:16px;">&#128227;</span>
+        <span>Ask or coordinate with the <strong>#product-release</strong> group (optional)</span>
+      </div>
+      <textarea class="s" id="f-coordination" style="min-height:200px;" placeholder="Use this to reach Sales, CS, CC, PS, or Marketing directly through the release channel. Examples:&#10;&bull; Ask Sales / CS for help identifying beta customers&#10;&bull; Ask Marketing to review comms timing or briefs&#10;&bull; Flag what testers should watch out for&#10;&bull; Reminder to CC to review and approve the Freshdesk release note draft&#10;&bull; Ask for input from other teams before rollout"></textarea>
+      <div class="fh">Appended to the <strong>#product-release</strong> post only. Not shown in #product-news. Leave blank if nothing to add.</div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:space-between;">
+      <button class="back-btn" onclick="goStep1()">&#8592; Back</button>
+      <button class="gen-btn" id="generate-btn" style="width:auto;padding:11px 28px;" onclick="generate()">Continue to preview &#8594;</button>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div id="preview" class="hidden">
+    <div style="margin-bottom:1.25rem;">
+      <h2 style="font-family:'Source Serif 4',serif;font-size:1.5rem;font-weight:600;color:#391E84;margin-bottom:0.25rem;line-height:1.2;">Preview before posting</h2>
+      <p style="font-size:13px;color:#524C62;line-height:1.5;">Review what will be posted to each channel. <strong>Nothing has been sent yet.</strong> Go back if anything needs editing.</p>
+    </div>
+    <div class="preview-channel-card">
+      <div class="preview-channel-head">
+        <span class="pc-emoji">&#128240;</span>
+        <div>
+          <div class="pc-name">#product-news</div>
+          <div class="pc-sub" id="preview-news-sub">Company-wide announcement</div>
+        </div>
+      </div>
+      <div class="preview-content" id="preview-news"></div>
+      <div id="preview-news-thumbs"></div>
+    </div>
+    <div class="preview-channel-card">
+      <div class="preview-channel-head">
+        <span class="pc-emoji">&#128736;&#65039;</span>
+        <div>
+          <div class="pc-name">#product-release</div>
+          <div class="pc-sub" id="preview-release-sub">Release coordination</div>
+        </div>
+      </div>
+      <div class="preview-content" id="preview-release"></div>
+      <div id="preview-release-thumbs"></div>
+    </div>
+    <div id="preview-fd-card" class="preview-channel-card hidden" style="background:#FFF4D6;border:2px solid #E8A317;padding:1.25rem;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:28px;line-height:1;">&#9888;&#65039;</span>
+        <div style="flex:1;">
+          <div style="font-weight:700;color:#7A5300;font-size:15px;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.02em;">Action needed from you (PM) after posting</div>
+          <p style="font-size:13px;color:#0D0A16;line-height:1.55;margin-bottom:0.75rem;">
+            An AI-generated customer-facing release note will be created as a <strong>draft</strong> in the Freshdesk Product News folder. <strong>It is NOT published automatically.</strong> Customer-facing content always needs human review.
+          </p>
+          <div style="background:#fff;border:1px solid #E8A317;border-radius:6px;padding:0.75rem 0.875rem;margin-bottom:0.75rem;">
+            <div style="font-size:13px;font-weight:700;color:#0D0A16;margin-bottom:0.5rem;">Your next steps:</div>
+            <ol style="font-size:13px;color:#0D0A16;line-height:1.7;padding-left:1.25rem;margin:0;">
+              <li>Go to the <a href="https://simployer.freshdesk.com/a/solutions/folders/201000266748" target="_blank" rel="noopener" style="color:#391E84;font-weight:600;text-decoration:underline;">Product News folder in Freshdesk</a> and open the draft.</li>
+              <li>Review the content carefully. Polish or correct anything that needs improving so it reads well to customers.</li>
+              <li>Send the draft to the <strong>Customer team</strong> for final review and publishing.</li>
+            </ol>
+          </div>
+          <div style="font-size:11px;color:#7A5300;line-height:1.45;font-style:italic;">The Customer team only reviews drafts that you actively send to them. They will not check Freshdesk on their own.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:space-between;">
+      <button class="back-btn" onclick="goBackToEdit()">&#8592; Back to edit</button>
+      <button class="gen-btn post-now-btn" style="width:auto;padding:11px 28px;" onclick="confirmAndPost()">Post now &#10003;</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-card" id="loading">
+    <div class="spinner"></div>
+    <p class="lm" id="lm-text">Writing release note...</p>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-wrap" id="output">
+    <div class="note-bar" id="out-note-bar"></div>
+    <div class="out-tabs" id="out-tabs"></div>
+    <div class="doc-card">
+      <div class="doc-top">
+        <div class="doc-meta"><span class="dbadge" id="out-badge">Customer</span><span class="doc-name" id="out-name"></span></div>
+        <button class="copy-btn" onclick="copyOut()">Copy</button>
+      </div>
+      <div class="doc-body" id="out-body"></div>
+    </div>
+    <div id="fd-publish-row" style="margin-top:1rem;display:none;">
+      <div class="note-bar"><strong>Release note draft created in Freshdesk.</strong> Team X will review and publish it in the Product news folder.</div>
+    </div>
+    <div class="bot-row">
+      <button class="bot-btn" onclick="goStep2back()">Edit inputs</button>
+      <button class="bot-btn" onclick="regenerate()">Regenerate</button>
+    </div>
+    <button class="restart" onclick="restart()">Start a new release</button>
+  </div>
+</div>
+
+<script>
+var releaseType='ga',docs={},currentTab='freshdesk';
+var N8N_WEBHOOK_URL='https://n8n.simployer.com/webhook/release-agent';
+var MAX_IMAGES=4;
+var MAX_IMAGE_BYTES=5*1024*1024; // 5 MB
+var selectedImages=[]; // [{file:File, dataUrl:string}]
+
+// --- SCREENSHOTS ---
+function onImagesPicked(e){
+  var files=Array.from(e.target.files||[]);
+  e.target.value=''; // allow re-selecting same file
+  files.forEach(function(f){
+    if(selectedImages.length>=MAX_IMAGES){
+      alert('Maximum '+MAX_IMAGES+' screenshots. Remove one before adding more.');
+      return;
+    }
+    if(!/^image\//.test(f.type)){
+      alert('"'+f.name+'" is not an image. PNG, JPG, GIF and WebP are supported.');
+      return;
+    }
+    if(f.size>MAX_IMAGE_BYTES){
+      alert('"'+f.name+'" is '+Math.round(f.size/1024/1024*10)/10+' MB. Max is 5 MB per image.');
+      return;
+    }
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      selectedImages.push({file:f, dataUrl:ev.target.result});
+      renderScreenshotThumbs();
+    };
+    reader.readAsDataURL(f);
+  });
+}
+var dragSrcIdx=null;
+function renderScreenshotThumbs(){
+  var list=document.getElementById('screenshots-list');
+  if(!list) return;
+  list.innerHTML=selectedImages.map(function(img,i){
+    var name=img.file.name.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    return '<div class="screenshot-thumb" draggable="true" data-idx="'+i+'" style="background-image:url(\''+img.dataUrl+'\')" title="'+name+'">'
+      +'<button type="button" class="thumb-remove" onclick="event.stopPropagation();removeScreenshot('+i+')" aria-label="Remove">×</button>'
+      +'<div class="thumb-name">'+name+'</div>'
+      +'</div>';
+  }).join('');
+  // Attach drag handlers
+  list.querySelectorAll('.screenshot-thumb').forEach(function(el){
+    el.addEventListener('dragstart',function(e){
+      dragSrcIdx=parseInt(el.dataset.idx);
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    el.addEventListener('dragend',function(){
+      el.classList.remove('dragging');
+      list.querySelectorAll('.screenshot-thumb').forEach(function(t){t.classList.remove('drag-over');});
+    });
+    el.addEventListener('dragover',function(e){
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      el.classList.add('drag-over');
+    });
+    el.addEventListener('dragleave',function(){
+      el.classList.remove('drag-over');
+    });
+    el.addEventListener('drop',function(e){
+      e.preventDefault();
+      var targetIdx=parseInt(el.dataset.idx);
+      if(dragSrcIdx!==null && dragSrcIdx!==targetIdx){
+        var moved=selectedImages.splice(dragSrcIdx,1)[0];
+        selectedImages.splice(targetIdx,0,moved);
+        renderScreenshotThumbs();
+      }
+    });
+  });
+  var btn=document.getElementById('add-screenshot-btn');
+  if(btn) btn.style.display=selectedImages.length>=MAX_IMAGES?'none':'';
+}
+function removeScreenshot(idx){
+  selectedImages.splice(idx,1);
+  renderScreenshotThumbs();
+}
+
+// --- SLACK HANDLE AUTOCOMPLETE ---
+// Fetches the workspace user list once, then attaches a styled JS dropdown to
+// the "Posted by" (single handle) and "Team credits" (multi handle, comma-
+// separated) inputs. Silent failure: if the fetch is blocked the fields stay
+// plain text inputs.
+var SLACK_USERS=[];
+
+(function loadSlackUsers(){
+  fetch(N8N_WEBHOOK_URL+'/users').then(function(r){return r.json();}).then(function(data){
+    if(data && Array.isArray(data.users)) SLACK_USERS=data.users;
+    bindHandleAutocomplete('f-postedby', false);
+    bindHandleAutocomplete('f-credits', true);
+  }).catch(function(){ /* silent: PM can still type manually */ });
+})();
+
+function bindHandleAutocomplete(inputId, isMulti){
+  var input=document.getElementById(inputId);
+  if(!input) return;
+  // Wrap input so the dropdown can position relative to it.
+  var wrap=input.parentElement;
+  if(!wrap.classList.contains('handle-input-wrap')){
+    wrap=document.createElement('div');
+    wrap.className='handle-input-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+  }
+  var dropdown=document.createElement('div');
+  dropdown.className='handle-dropdown';
+  wrap.appendChild(dropdown);
+
+  function getCurrentToken(){
+    if(!isMulti) return {text:input.value, start:0, end:input.value.length};
+    var v=input.value;
+    var pos=input.selectionStart!=null ? input.selectionStart : v.length;
+    var start=0, end=v.length;
+    for(var i=pos-1;i>=0;i--){ if(v[i]===','){ start=i+1; break; } }
+    for(var j=pos;j<v.length;j++){ if(v[j]===','){ end=j; break; } }
+    var seg=v.slice(start,end);
+    var lead=seg.match(/^\s+/);
+    if(lead){ start+=lead[0].length; seg=seg.slice(lead[0].length); }
+    var trail=seg.match(/\s+$/);
+    if(trail){ end-=trail[0].length; seg=seg.slice(0,seg.length-trail[0].length); }
+    return {text:seg, start:start, end:end};
+  }
+
+  function render(){
+    if(!SLACK_USERS.length){ dropdown.classList.remove('show'); return; }
+    var token=getCurrentToken();
+    var query=token.text.replace(/^@/,'').toLowerCase().trim();
+    if(!query){ dropdown.classList.remove('show'); return; }
+    var prefixHits=[], substrHits=[];
+    for(var i=0;i<SLACK_USERS.length;i++){
+      var u=SLACK_USERS[i];
+      var name=(u.name||u.display_name||'').toLowerCase();
+      var real=(u.real_name||'').toLowerCase();
+      if(!name && !real) continue;
+      if(name.indexOf(query)===0 || real.indexOf(query)===0){ prefixHits.push(u); }
+      else if(name.indexOf(query)>-1 || real.indexOf(query)>-1){ substrHits.push(u); }
+      if(prefixHits.length+substrHits.length>=40) break;
+    }
+    var matches=prefixHits.concat(substrHits).slice(0,8);
+    if(!matches.length){
+      dropdown.innerHTML='<div class="handle-empty">No match in Slack</div>';
+      dropdown.classList.add('show');
+      return;
+    }
+    dropdown.innerHTML=matches.map(function(u){
+      var h=u.name||u.display_name||'';
+      var label=u.real_name||h;
+      return '<div class="handle-option" data-handle="'+h+'"><span class="handle-id">@'+h+'</span><span class="handle-name">'+label.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span></div>';
+    }).join('');
+    dropdown.classList.add('show');
+  }
+
+  function pick(handle){
+    var token=getCurrentToken();
+    var v=input.value;
+    var newToken='@'+handle;
+    if(isMulti){
+      var before=v.slice(0,token.start);
+      var after=v.slice(token.end);
+      // If there's no comma after, leave cursor positioned for next handle.
+      input.value=before+newToken+after;
+      var pos=before.length+newToken.length;
+      input.setSelectionRange(pos,pos);
+    } else {
+      input.value=newToken;
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+    dropdown.classList.remove('show');
+    input.focus();
+  }
+
+  input.addEventListener('input', render);
+  input.addEventListener('focus', render);
+  input.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ dropdown.classList.remove('show'); }
+  });
+  input.addEventListener('blur', function(){
+    setTimeout(function(){ dropdown.classList.remove('show'); }, 150);
+  });
+  dropdown.addEventListener('mousedown', function(e){
+    var opt=e.target;
+    while(opt && !opt.classList.contains('handle-option')) opt=opt.parentElement;
+    if(opt && opt.dataset && opt.dataset.handle){
+      e.preventDefault();
+      pick(opt.dataset.handle);
+    }
+  });
+}
+
+// --- NAVIGATION ---
+function goStep0(){
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('prog').classList.add('hidden');
+  document.getElementById('step0').classList.remove('hidden');
+  document.getElementById('prefill-input').value='';
+  document.getElementById('prefill-error').style.display='none';
+  document.getElementById('prefill-loading').classList.add('hidden');
+  document.querySelector('#step0 .card').style.opacity='';
+  document.querySelector('#step0 .card').style.pointerEvents='';
+  var banner=document.getElementById('prefill-banner');
+  if(banner) banner.remove();
+}
+function skipPrefill(){
+  document.getElementById('step0').classList.add('hidden');
+  document.getElementById('prog').classList.remove('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+}
+function goStep2(){
+  var missing=[];
+  if(!v('f-title')) missing.push('Release title');
+  if(!v('f-problem')) missing.push('The problem we solve');
+  if(!v('f-what')) missing.push('What we have built');
+  if(!v('f-whom')) missing.push('Who we built this for');
+  if(!document.getElementById('f-tier').value) missing.push('Tier');
+  if(!document.getElementById('f-team').value) missing.push('Responsible team');
+  if(!v('f-postedby')) missing.push('Your Slack handle');
+  if(missing.length){
+    alert('Missing required fields:\n\n\u2022 '+missing.join('\n\u2022 '));return;
+  }
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('ps1').className='ps done';
+  document.getElementById('ps2').className='ps active';
+}
+function goStep1(){
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+  document.getElementById('ps1').className='ps active';
+  document.getElementById('ps2').className='ps';
+}
+function goStep2back(){
+  document.getElementById('output').classList.remove('show');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('ps2').className='ps active';
+  document.getElementById('ps3').className='ps';
+}
+
+// --- PRE-FILL ---
+function runPrefill(){
+  var raw=document.getElementById('prefill-input').value.trim();
+  if(!raw){var e=document.getElementById('prefill-error');e.textContent='Please paste some notes first.';e.style.display='block';return;}
+  document.getElementById('prefill-error').style.display='none';
+  document.getElementById('prefill-loading').classList.remove('hidden');
+  document.querySelector('#step0 .card').style.opacity='0.4';
+  document.querySelector('#step0 .card').style.pointerEvents='none';
+  document.querySelectorAll('#step0 button').forEach(function(b){b.disabled=true;});
+  fetch(N8N_WEBHOOK_URL+'/prefill', {
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'_body='+encodeURIComponent(JSON.stringify({notes:raw}))
+  }).then(function(r){return r.json();}).then(function(msg){
+    handlePrefillResponse(msg);
+  }).catch(function(err){
+    handlePrefillResponse({type:'prefill', error:(err&&err.message)||'network error'});
+  });
+  setTimeout(function(){
+    if(!document.getElementById('prefill-loading').classList.contains('hidden')){
+      document.getElementById('prefill-loading').classList.add('hidden');
+      document.querySelector('#step0 .card').style.opacity='';
+      document.querySelector('#step0 .card').style.pointerEvents='';
+      document.querySelectorAll('#step0 button').forEach(function(b){b.disabled=false;});
+      var e=document.getElementById('prefill-error');e.textContent='Request timed out. Please try again or fill the form manually.';e.style.display='block';
+    }
+  }, 30000);
+}
+function applyPrefill(data){
+  if(data.releaseType&&['ga','beta','internal'].indexOf(data.releaseType)>=0){
+    releaseType=data.releaseType;
+    document.querySelectorAll('.rt-btn').forEach(function(b){b.classList.remove('selected');});
+    var rtBtn=document.querySelector('.rt-btn[data-rt="'+data.releaseType+'"]');
+    if(rtBtn) rtBtn.classList.add('selected');
+  }
+  if(data.tier&&['t1','t2','t3','t4'].indexOf(data.tier)>=0) document.getElementById('f-tier').value=data.tier;
+  if(data.title) document.getElementById('f-title').value=data.title;
+  if(data.version) document.getElementById('f-version').value=data.version;
+  if(data.problem) document.getElementById('f-problem').value=data.problem;
+  if(data.what) document.getElementById('f-what').value=data.what;
+  if(data.limits) document.getElementById('f-limits').value=data.limits;
+  if(data.whom) document.getElementById('f-whom').value=data.whom;
+  if(data.commercial) document.getElementById('f-commercial').value=data.commercial;
+  if(data.credits) document.getElementById('f-credits').value=data.credits;
+  var req=['title','problem','what','limits','whom'];
+  var missing=req.filter(function(f){return !data[f]||!data[f].trim();});
+  var filled=req.length-missing.length;
+  var labels={title:'Release title',problem:'Problem we solve',what:'What we built',limits:'What we do not solve',whom:'Who this is for'};
+  var msg='Pre-filled '+filled+' of '+req.length+' required fields.';
+  if(missing.length) msg+=' Still needed: '+missing.map(function(k){return labels[k];}).join(', ')+'.';
+  document.getElementById('prefill-loading').classList.add('hidden');
+  document.querySelector('#step0 .card').style.opacity='';
+  document.querySelector('#step0 .card').style.pointerEvents='';
+  document.getElementById('step0').classList.add('hidden');
+  document.getElementById('prog').classList.remove('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+  var banner=document.createElement('div');
+  banner.id='prefill-banner';
+  banner.style.cssText='background:#E6F3ED;border:1px solid #BAE8D5;border-radius:10px;padding:10px 14px;font-size:12px;color:#196F4D;margin-bottom:1rem;line-height:1.5;';
+  banner.innerHTML='<strong>Pre-filled from your notes.</strong> '+msg+' Review everything before generating.';
+  document.getElementById('step1').insertBefore(banner,document.getElementById('step1').firstChild);
+}
+
+// --- FORM HELPERS ---
+function selectRT(el){
+  document.querySelectorAll('.rt-btn').forEach(function(b){b.classList.remove('selected');});
+  el.classList.add('selected');
+  releaseType=el.dataset.rt;
+  updateAccessChecks();
+  updateFdUrlLabel();
+}
+function updateAccessChecks(){
+  var wrap=document.getElementById('access-checks');
+  var intBlock=document.getElementById('access-check-internal');
+  var betaBlock=document.getElementById('access-check-beta');
+  var gaBlock=document.getElementById('access-check-ga');
+  // Reset all checkboxes
+  ['chk-internal','chk-beta-internal','chk-beta-customers','chk-ga-internal','chk-ga-customers'].forEach(function(id){document.getElementById(id).checked=false;});
+  // Show the right block
+  intBlock.style.display='none';betaBlock.style.display='none';gaBlock.style.display='none';
+  if(releaseType==='internal'){
+    wrap.style.display='';intBlock.style.display='';
+  } else if(releaseType==='beta'){
+    wrap.style.display='';betaBlock.style.display='';
+  } else {
+    wrap.style.display='';gaBlock.style.display='';
+  }
+  // Coordination-notes block is always visible — any release type may have asks
+  // for Sales / CS / CC / PS / Marketing via the #product-release channel.
+  updateGenerateBtn();
+}
+function updateGenerateBtn(){
+  var btn=document.getElementById('generate-btn');
+  if(!btn) return;
+  var ok=true;
+  if(releaseType==='internal') ok=document.getElementById('chk-internal').checked;
+  else if(releaseType==='beta') ok=document.getElementById('chk-beta-internal').checked&&document.getElementById('chk-beta-customers').checked;
+  else ok=document.getElementById('chk-ga-internal').checked&&document.getElementById('chk-ga-customers').checked;
+  btn.style.opacity=ok?'':'0.45';
+  btn.style.pointerEvents=ok?'':'none';
+}
+function addURL(){
+  var list=document.getElementById('fd-urls');
+  var row=document.createElement('div');
+  row.className='url-row';
+  row.innerHTML='<input type="text" placeholder="https://mysupport.simployer.com/..." class="fd-url-input"/><button class="url-remove-btn" onclick="this.parentElement.remove()">&times;</button>';
+  list.appendChild(row);
+}
+function getFDUrls(){
+  return Array.from(document.querySelectorAll('.fd-url-input')).map(function(i){return i.value.trim();}).filter(Boolean);
+}
+function v(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+
+// --- GENERATE ---
+var tierNames={t1:'T1 - New feature',t2:'T2 - Major improvement',t3:'T3 - Minor improvement',t4:'T4 - Technical'};
+
+function fdUrlRequired(){
+  var tier=document.getElementById('f-tier').value;
+  var customerFacing=releaseType==='ga'||releaseType==='beta';
+  return (tier==='t1'||tier==='t2')&&customerFacing;
+}
+function updateFdUrlLabel(){
+  var label=document.getElementById('fl-fd-urls');
+  if(!label) return;
+  var req=fdUrlRequired();
+  label.innerHTML='Help center articles &amp; documentation'+(req?' <span class="req">*</span>':'');
+}
+// Holds the data + Slack posts built from step 2, used by confirmAndPost().
+var pendingDocs=null;
+
+function generate(){
+  if(fdUrlRequired()&&getFDUrls().length===0){
+    alert('A help center article link is required for T1 and T2 customer or beta releases.\n\nAdd at least one URL before generating.');
+    return;
+  }
+
+  var tierVal=document.getElementById('f-tier').value;
+  var d={
+    tier:tierVal?tierNames[tierVal]:'',
+    tierKey:tierVal,
+    title:v('f-title'),version:v('f-version'),
+    problem:v('f-problem'),what:v('f-what'),
+    limits:v('f-limits'),whom:v('f-whom'),
+    commercial:v('f-commercial'),other:v('f-other'),
+    releaseType:releaseType,
+    fdUrls:getFDUrls(),
+    apidoc:v('f-apidoc'),credits:v('f-credits'),
+    postedBy:v('f-postedby'),
+    team:v('f-team'),
+    coordination:v('f-coordination')
+  };
+
+  var slackSections={
+    problem:d.problem, what:d.what, whom:d.whom,
+    commercial:d.commercial, limits:d.limits
+  };
+  var slackPost=assembleSlackPost(d,slackSections,false);
+  var slackPostInternal=assembleSlackPost(d,slackSections,true);
+
+  pendingDocs={d:d, slackPost:slackPost, slackPostInternal:slackPostInternal};
+
+  // Render previews. The release post's __NEWS_LINK__ placeholder is shown
+  // as friendly preview text — the real permalink only exists after posting.
+  var releasePreview=slackPostInternal.replace('__NEWS_LINK__','(link to the #product-news post above)');
+  document.getElementById('preview-news').innerHTML=renderSlackPreview(slackPost);
+  document.getElementById('preview-release').innerHTML=renderSlackPreview(releasePreview);
+
+  // Screenshot thumbnails on both channel cards (same images go to both threads)
+  var thumbsHtml = selectedImages.length
+    ? '<div class="preview-thumbs-label">Attached as thread replies (' + selectedImages.length + ')</div>'
+      + '<div class="preview-thumbs">'
+      + selectedImages.map(function(img){
+          return '<div class="preview-thumb" style="background-image:url(\''+img.dataUrl+'\')"></div>';
+        }).join('')
+      + '</div>'
+    : '';
+  document.getElementById('preview-news-thumbs').innerHTML=thumbsHtml;
+  document.getElementById('preview-release-thumbs').innerHTML=thumbsHtml;
+
+  document.getElementById('preview-release-sub').textContent=(d.coordination && d.coordination.trim())
+    ? 'Compact summary + your coordination notes'
+    : 'Compact summary linking to the full announcement';
+
+  // Freshdesk note shown only for GA releases
+  // Freshdesk action card shows for GA releases EXCEPT T4 (technical) — those
+  // are backend-only and don't need a customer-facing release note.
+  var fdCard=document.getElementById('preview-fd-card');
+  if(d.releaseType==='ga' && d.tierKey!=='t4'){ fdCard.classList.remove('hidden'); }
+  else { fdCard.classList.add('hidden'); }
+
+  // Switch view
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('preview').classList.remove('hidden');
+  document.getElementById('ps2').className='ps done';
+  document.getElementById('ps3').className='ps active';
+  window.scrollTo(0,0);
+}
+
+function goBackToEdit(){
+  document.getElementById('preview').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('ps2').className='ps active';
+  document.getElementById('ps3').className='ps';
+  window.scrollTo(0,0);
+}
+
+function confirmAndPost(){
+  if(!pendingDocs){
+    alert('Something went wrong building the preview. Please go back to edit and try again.');
+    return;
+  }
+
+  document.getElementById('preview').classList.add('hidden');
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('loading').classList.add('show');
+
+  var lm=document.getElementById('lm-text');
+  lm.textContent=pendingDocs.d.releaseType==='ga'?'Posting to Slack and generating release note...':'Posting to Slack...';
+
+  // Top-window form POST: browser navigates to the server's success page.
+  // Encoded as multipart/form-data so we can attach binary image files (named
+  // image1..image4) alongside the JSON _body field. n8n's webhook receives
+  // the JSON via $json.body._body and each image via $binary.imageN.
+  var submitForm=document.createElement('form');
+  submitForm.method='POST';
+  submitForm.action=N8N_WEBHOOK_URL;
+  submitForm.enctype='multipart/form-data';
+  submitForm.style.display='none';
+
+  var submitInput=document.createElement('textarea');
+  submitInput.name='_body';
+  submitInput.value=JSON.stringify({payload:pendingDocs.d, slackPost:pendingDocs.slackPost, slackPostInternal:pendingDocs.slackPostInternal, imageCount:selectedImages.length});
+  submitForm.appendChild(submitInput);
+
+  // Attach images as image1..imageN using DataTransfer to set the FileList.
+  selectedImages.forEach(function(img,i){
+    try {
+      var fileInput=document.createElement('input');
+      fileInput.type='file';
+      fileInput.name='image'+(i+1);
+      var dt=new DataTransfer();
+      dt.items.add(img.file);
+      fileInput.files=dt.files;
+      submitForm.appendChild(fileInput);
+    } catch(err){
+      // If DataTransfer isn't supported, the image is silently dropped — text
+      // post still goes through, and we surface no scary error to the PM.
+    }
+  });
+
+  document.body.appendChild(submitForm);
+  submitForm.submit();
+}
+
+// Render Slack-flavoured markdown into safe HTML for the preview.
+// Handles *bold*, _italic_, and @-handles. Mentions remain literal text — the
+// server resolves them to real Slack pings on submit.
+function renderSlackPreview(text){
+  var s=String(text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  s=s.replace(/(^|[\s(])\*([^*\n]+)\*/g,'$1<strong>$2</strong>');
+  s=s.replace(/(^|[\s(])_([^_\n]+)_/g,'$1<em>$2</em>');
+  s=s.replace(/@([A-Za-z0-9._-]+)/g,'<span class="mention">@$1</span>');
+  return s;
+}
+
+// --- SLACK POST BUILDER ---
+// Two variants based on includeCoord:
+//   false → FULL announcement (used for #product-news)
+//   true  → COMPACT release-channel post: short header + (optional) coordination
+//           notes + link placeholder (__NEWS_LINK__) to the full news post.
+//   The placeholder is substituted in the workflow after #product-news is sent
+//   (we need its permalink, only known post-send).
+function assembleSlackPost(d,s,includeCoord){
+  var isBeta=d.releaseType==='beta';
+  var isInternal=d.releaseType==='internal';
+
+  function tierReadable(tierFull){
+    if(!tierFull) return '';
+    var parts=tierFull.split(' - ');
+    var label=parts[1]||tierFull;
+    return label.replace(/\w\S*/g,function(w){return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();});
+  }
+
+  function attributionLine(){
+    var attribution=[];
+    if(d.postedBy) attribution.push('Posted by '+d.postedBy);
+    if(d.team) attribution.push(d.team+' team');
+    return attribution.length ? '_'+attribution.join(' \u2022 ')+'_' : '';
+  }
+
+  var releaseWord=isInternal?'Internal':isBeta?'Beta':'General';
+  var titleWithVer=d.title+(d.version?' ('+d.version+')':'');
+  var tierLabel=tierReadable(d.tier);
+
+  // === COMPACT VARIANT for #product-release ===
+  // First content lines mirror the news post (header + tier+blurb), then
+  // either the coordination section or a fallback invitation, then the link.
+  if(includeCoord){
+    var clines=[];
+    var cattr=attributionLine();
+    if(cattr){ clines.push(cattr); clines.push('\u200b'); }
+    clines.push(':rocket: '+releaseWord+' Release: *'+titleWithVer+'*');
+    clines.push('\u200b');
+    var cContextBlurb = isInternal
+      ? 'This is our chance to stress-test the feature internally before exposing it to any customer.'
+      : isBeta
+        ? 'Selected customers now have access to test and share insights before this goes live for all customers.'
+        : 'This feature is now available for all customers.';
+    clines.push(tierLabel ? '*'+tierLabel+'*: '+cContextBlurb : cContextBlurb);
+    if(d.coordination && d.coordination.trim()){
+      clines.push('\u200b'); clines.push('\u200b');
+      clines.push(':handshake: _From Product to the release group_');
+      var coordItems=d.coordination.split('\n').map(function(l){return l.trim().replace(/^[-\u2022]\s*/,'');}).filter(Boolean);
+      coordItems.forEach(function(item){ clines.push('\u2022 '+item); });
+    } else {
+      // Fallback open invitation when PM did not add specific coordination notes.
+      clines.push('\u200b'); clines.push('\u200b');
+      clines.push(':speech_balloon: _Let me know if you find something that is off, missing, or have questions about this release._');
+    }
+    clines.push('\u200b'); clines.push('\u200b');
+    clines.push(':newspaper: Full release announcement: __NEWS_LINK__');
+    return clines.join('\n');
+  }
+
+  // === FULL VARIANT for #product-news ===
+  var lines=[];
+  var attr=attributionLine();
+  if(attr){ lines.push(attr); lines.push('\u200b'); }
+
+  lines.push(':rocket: '+releaseWord+' Release: *'+titleWithVer+'*');
+  lines.push('\u200b');
+
+  var contextBlurb = isInternal
+    ? 'This is our chance to stress-test the feature internally before exposing it to any customer.'
+    : isBeta
+      ? 'Selected customers now have access to test and share insights before this goes live for all customers.'
+      : 'This feature is now available for all customers.';
+  lines.push(tierLabel ? '*'+tierLabel+'*: '+contextBlurb : contextBlurb);
+
+  function spacer(){ lines.push('\u200b'); lines.push('\u200b'); }
+
+  function addSection(emoji,header,content){
+    if(!content||!content.trim()) return;
+    spacer();
+    lines.push(emoji+' _'+header+'_');
+    var items=content.split('\n').map(function(l){return l.trim().replace(/^[-\u2022]\s*/,'');}).filter(Boolean);
+    items.forEach(function(item){ lines.push('\u2022 '+item); });
+  }
+
+  addSection(':bulb:','The problem we solved', s.problem||'');
+  addSection(':white_check_mark:','What we released to solve the problem', s.what||'');
+  addSection(':busts_in_silhouette:','Who this is for', s.whom||'');
+  if(d.commercial) addSection(':bar_chart:','Why it matters', s.commercial||'');
+  if(d.limits) addSection(':no_entry_sign:','What we do not solve yet', s.limits||'');
+
+  var resources=[];
+  if(d.fdUrls.length) d.fdUrls.forEach(function(u){resources.push('Help center article: '+u);});
+  if(d.apidoc) resources.push('API docs: '+d.apidoc);
+  if(resources.length){
+    spacer();
+    lines.push(':books: _Resources_');
+    resources.forEach(function(r){lines.push('\u2022 '+r);});
+  }
+
+  if(d.credits){
+    spacer();
+    lines.push('Big kudos to '+d.credits+' for shipping this! :tada:');
+  }
+
+  return lines.join('\n');
+}
+
+// --- OUTPUT TABS ---
+function buildOutputTabs(rt){
+  var noteBar=document.getElementById('out-note-bar');
+  var tabsEl=document.getElementById('out-tabs');
+  tabsEl.innerHTML='';
+
+  if(rt==='internal'){
+    noteBar.innerHTML='<strong>Internal release.</strong> Posted to <strong>#product-news</strong> and <strong>#product-release</strong>.';
+    addTab(tabsEl,'slack','Slack post',true);
+    switchTabByKey('slack');
+  } else if(rt==='beta'){
+    noteBar.innerHTML='<strong>Beta release.</strong> Posted to <strong>#product-news</strong> and <strong>#product-release</strong>. Release note draft comes at general release.';
+    addTab(tabsEl,'slack','Slack post',true);
+    switchTabByKey('slack');
+  } else {
+    noteBar.innerHTML='<strong>General release.</strong> Posted to <strong>#product-news</strong> and <strong>#product-release</strong>. Release note draft created in Freshdesk for Team X to review.';
+    addTab(tabsEl,'freshdesk','Release note',true);
+    addTab(tabsEl,'slack','Slack post',false);
+    switchTabByKey('freshdesk');
+  }
+}
+
+function addTab(container,key,label,active){
+  var btn=document.createElement('button');
+  btn.className='out-tab'+(active?' active':'');
+  btn.dataset.doc=key;
+  btn.textContent=label;
+  btn.onclick=function(){switchTab(key,btn);};
+  container.appendChild(btn);
+}
+
+function switchTabByKey(key){
+  document.querySelectorAll('.out-tab').forEach(function(t){
+    t.classList.toggle('active',t.dataset.doc===key);
+  });
+  currentTab=key;
+  var isFreshdesk=key==='freshdesk';
+  document.getElementById('out-badge').className='dbadge '+(isFreshdesk?'db-freshdesk':'db-slack');
+  document.getElementById('out-badge').textContent=isFreshdesk?'Customer':'Internal';
+  document.getElementById('out-name').textContent=document.querySelector('.out-tab[data-doc="'+key+'"]')?document.querySelector('.out-tab[data-doc="'+key+'"]').textContent:'';
+  document.getElementById('out-body').textContent=docs[key]||'';
+  document.getElementById('fd-publish-row').style.display=isFreshdesk?'block':'none';
+}
+function switchTab(key,el){
+  document.querySelectorAll('.out-tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  switchTabByKey(key);
+}
+
+function copyOut(){
+  if(navigator.clipboard){navigator.clipboard.writeText(docs[currentTab]||'').then(function(){var b=document.querySelector('.copy-btn');b.textContent='Copied!';setTimeout(function(){b.textContent='Copy';},1500);});}
+}
+function regenerate(){document.getElementById('output').classList.remove('show');generate();}
+function restart(){
+  releaseType='ga';docs={};
+  document.querySelectorAll('.rt-btn').forEach(function(b){b.classList.remove('selected');});
+  document.querySelector('.rt-btn[data-rt="ga"]').classList.add('selected');
+  ['chk-internal','chk-beta-internal','chk-beta-customers','chk-ga-internal','chk-ga-customers'].forEach(function(id){document.getElementById(id).checked=false;});
+  document.getElementById('access-checks').style.display='none';
+  document.getElementById('f-tier').value='';
+  ['f-title','f-version','f-problem','f-what','f-limits','f-whom','f-commercial','f-other','f-apidoc','f-credits','f-postedby','f-coordination'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-team').value='';
+  var fdUrls=document.getElementById('fd-urls');
+  fdUrls.innerHTML='<div class="url-row"><input type="text" placeholder="https://mysupport.simployer.com/..." class="fd-url-input"/><button class="url-add-btn" onclick="addURL()">+ Add another</button></div>';
+  document.getElementById('output').classList.remove('show');
+  var preview=document.getElementById('preview');
+  if(preview) preview.classList.add('hidden');
+  pendingDocs=null;
+  selectedImages=[]; renderScreenshotThumbs();
+  ['step1','step2'].forEach(function(s){document.getElementById(s).classList.add('hidden');});
+  document.getElementById('prog').classList.add('hidden');
+  document.getElementById('step0').classList.remove('hidden');
+  document.getElementById('prefill-input').value='';
+  document.getElementById('prefill-error').style.display='none';
+  document.getElementById('loading').classList.remove('show');
+  document.getElementById('loading').classList.add('hidden');
+  ['ps1','ps2','ps3'].forEach(function(id,i){document.getElementById(id).className='ps'+(i===0?' active':'');});
+  var banner=document.getElementById('prefill-banner');
+  if(banner) banner.remove();
+}
+
+// --- IFRAME BRIDGE (workaround for n8n sandbox CSP blocking fetch) ---
+function postViaForm(url, data) {
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = url;
+  form.target = 'agent-bridge';
+  form.style.display = 'none';
+  var input = document.createElement('textarea');
+  input.name = '_body';
+  input.value = JSON.stringify(data);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+window.addEventListener('message', function(e) {
+  try {
+    var msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+    if (msg.type === 'prefill') handlePrefillResponse(msg);
+    else if (msg.type === 'submit') handleSubmitResponse(msg);
+  } catch(err) {}
+});
+function handlePrefillResponse(msg) {
+  if (msg.error) {
+    document.getElementById('prefill-loading').classList.add('hidden');
+    document.querySelector('#step0 .card').style.opacity='';
+    document.querySelector('#step0 .card').style.pointerEvents='';
+    document.querySelectorAll('#step0 button').forEach(function(b){b.disabled=false;});
+    var e=document.getElementById('prefill-error');e.textContent='Could not extract details. Please fill the form manually.';e.style.display='block';
+    return;
+  }
+  applyPrefill(msg.data);
+}
+function handleSubmitResponse(msg) {
+  if (msg.error) {
+    var lm=document.getElementById('lm-text');
+    lm.textContent='Something went wrong: '+(msg.error||'please try again.');
+    setTimeout(function(){
+      document.getElementById('loading').classList.remove('show');
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+    },2500);
+    return;
+  }
+  if (msg.freshdeskArticle) docs.freshdesk = msg.freshdeskArticle;
+  document.getElementById('loading').classList.remove('show');
+  document.getElementById('loading').classList.add('hidden');
+  buildOutputTabs(releaseType);
+  document.getElementById('output').classList.add('show');
+}
+</script>
+<iframe name="agent-bridge" id="agent-bridge" style="display:none"></iframe>
+</body></html>
