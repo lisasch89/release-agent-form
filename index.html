@@ -107,12 +107,33 @@ textarea.l{min-height:200px;line-height:1.6;}
 .preview-thumbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:0.625rem;padding-top:0.625rem;border-top:1px solid #E8E5F0;}
 .preview-thumbs .preview-thumb{width:64px;height:64px;border-radius:6px;background:#F2F0F7 center/cover no-repeat;border:1px solid #E8E5F0;}
 .preview-thumbs-label{font-size:11px;color:#9d98ad;margin-top:0.625rem;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;}
+.draft-banner{display:none;align-items:center;justify-content:space-between;gap:12px;background:#F5F2FF;border:1px solid #D9CFFA;border-radius:10px;padding:12px 14px;margin-bottom:1.25rem;}
+.draft-banner .db-text{font-size:13px;color:#391E84;}
+.draft-banner .db-when{color:#9d98ad;font-weight:400;}
+.draft-banner .db-actions{display:flex;gap:8px;flex-shrink:0;}
+.draft-banner button{font-family:Inter,sans-serif;font-size:12px;font-weight:600;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid transparent;}
+.db-resume{background:#391E84;color:#fff;}
+.db-resume:hover{background:#2a1563;}
+.db-discard{background:#fff;color:#91361D;border-color:#E3B7AC;}
+.db-discard:hover{background:#91361D;color:#fff;}
+.save-draft-btn{font-family:Inter,sans-serif;font-size:13px;font-weight:600;border-radius:10px;padding:11px 18px;cursor:pointer;background:#fff;color:#391E84;border:1px solid #C9BEF2;}
+.save-draft-btn:hover{background:#F5F2FF;}
+.draft-status{font-size:11px;color:#5BAF87;font-weight:600;opacity:0;transition:opacity 0.2s;white-space:nowrap;}
 </style>
 </head><body>
 <div class="app" id="app">
   <div class="logo-bar">
     <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" width="16" height="16"><path d="M8 2L14 12H2L8 2Z" fill="white" opacity="0.9"/></svg></div>
     <span class="logo-name">Release <em>Agent</em></span>
+  </div>
+
+  <!-- RESUME DRAFT BANNER -->
+  <div class="draft-banner" id="draft-banner">
+    <div class="db-text">You have a saved draft <span class="db-when" id="draft-when"></span>. Pick up where you left off?</div>
+    <div class="db-actions">
+      <button class="db-discard" onclick="discardDraft()">Discard</button>
+      <button class="db-resume" onclick="resumeDraft()">Resume draft</button>
+    </div>
   </div>
 
   <!-- STEP 0: PRE-FILL -->
@@ -222,7 +243,11 @@ textarea.l{min-height:200px;line-height:1.6;}
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <button class="back-btn" onclick="goStep0()">&#8592; Back</button>
-      <button class="gen-btn" style="width:auto;padding:11px 28px;" onclick="goStep2()">Continue &rarr;</button>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="draft-status" id="draft-status-1"></span>
+        <button class="save-draft-btn" onclick="saveDraftManual()">Save draft</button>
+        <button class="gen-btn" style="width:auto;padding:11px 28px;" onclick="goStep2()">Continue &rarr;</button>
+      </div>
     </div>
   </div>
 
@@ -308,9 +333,13 @@ textarea.l{min-height:200px;line-height:1.6;}
       <textarea class="s" id="f-coordination" style="min-height:200px;" placeholder="Use this to reach Sales, CS, CC, PS, or Marketing directly through the release channel. Examples:&#10;&bull; Ask Sales / CS for help identifying beta customers&#10;&bull; Ask Marketing to review comms timing or briefs&#10;&bull; Flag what testers should watch out for&#10;&bull; Reminder to CC to review and approve the Freshdesk release note draft&#10;&bull; Ask for input from other teams before rollout"></textarea>
       <div class="fh">Appended to the <strong>#product-release</strong> post only. Not shown in #product-news. Leave blank if nothing to add.</div>
     </div>
-    <div style="display:flex;gap:8px;justify-content:space-between;">
+    <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;">
       <button class="back-btn" onclick="goStep1()">&#8592; Back</button>
-      <button class="gen-btn" id="generate-btn" style="width:auto;padding:11px 28px;" onclick="generate()">Continue to preview &#8594;</button>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="draft-status" id="draft-status-2"></span>
+        <button class="save-draft-btn" onclick="saveDraftManual()">Save draft</button>
+        <button class="gen-btn" id="generate-btn" style="width:auto;padding:11px 28px;" onclick="generate()">Continue to preview &#8594;</button>
+      </div>
     </div>
   </div>
 
@@ -403,6 +432,93 @@ var MAX_IMAGES=4;
 var MAX_IMAGE_BYTES=5*1024*1024; // 5 MB
 var selectedImages=[]; // [{file:File, dataUrl:string}]
 
+// --- DRAFTS (saved in this browser via localStorage) ---
+var DRAFT_KEY='release-agent-draft-v1';
+var DRAFT_FIELDS=['prefill-input','f-title','f-version','f-problem','f-what','f-limits','f-whom','f-tier','f-team','f-commercial','f-other','f-apidoc','f-credits','f-postedby','f-coordination'];
+var DRAFT_CHECKS=['chk-internal','chk-beta-internal','chk-beta-customers','chk-ga-internal','chk-ga-customers'];
+var __saveTimer=null;
+function collectDraft(){
+  var d={releaseType:releaseType,fields:{},checks:{},fdUrls:[],images:[],savedAt:Date.now()};
+  DRAFT_FIELDS.forEach(function(id){var el=document.getElementById(id);if(el)d.fields[id]=el.value;});
+  DRAFT_CHECKS.forEach(function(id){var el=document.getElementById(id);if(el)d.checks[id]=el.checked;});
+  try{d.fdUrls=Array.from(document.querySelectorAll('.fd-url-input')).map(function(i){return i.value;}).filter(function(x){return x&&x.trim();});}catch(e){}
+  try{d.images=selectedImages.map(function(im){return {name:(im.file&&im.file.name)||'image.png',dataUrl:im.dataUrl};});}catch(e){d.images=[];}
+  return d;
+}
+function draftHasContent(d){
+  var any=false;
+  Object.keys(d.fields||{}).forEach(function(k){if(d.fields[k]&&String(d.fields[k]).trim())any=true;});
+  if((d.images||[]).length)any=true;
+  if((d.fdUrls||[]).length)any=true;
+  return any;
+}
+function saveDraft(){
+  try{
+    var d=collectDraft();
+    if(!draftHasContent(d))return;
+    try{localStorage.setItem(DRAFT_KEY,JSON.stringify(d));}
+    catch(e){var d2=collectDraft();d2.images=[];try{localStorage.setItem(DRAFT_KEY,JSON.stringify(d2));}catch(e2){return;}}
+    showDraftSaved();
+  }catch(e){}
+}
+function saveDraftManual(){var d=collectDraft();if(!draftHasContent(d)){alert('Nothing to save yet - add some content first.');return;}saveDraft();}
+function scheduleSave(){if(!window.__draftReady||window.__restoring)return;clearTimeout(__saveTimer);__saveTimer=setTimeout(saveDraft,800);}
+function showDraftSaved(){
+  var t=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  Array.prototype.forEach.call(document.querySelectorAll('.draft-status'),function(el){el.textContent='Draft saved '+t;el.style.opacity='1';});
+}
+function clearDraft(){try{localStorage.removeItem(DRAFT_KEY);}catch(e){}Array.prototype.forEach.call(document.querySelectorAll('.draft-status'),function(el){el.textContent='';el.style.opacity='0';});}
+function dataURLtoFile(dataurl,filename){
+  try{var arr=dataurl.split(','),mime=(arr[0].match(/:(.*?);/)||[])[1]||'image/png',bstr=atob(arr[1]),n=bstr.length,u8=new Uint8Array(n);while(n--){u8[n]=bstr.charCodeAt(n);}return new File([u8],filename,{type:mime});}
+  catch(e){return null;}
+}
+function restoreDraft(d){
+  if(!d)return;
+  Object.keys(d.fields||{}).forEach(function(id){var el=document.getElementById(id);if(el&&d.fields[id]!=null)el.value=d.fields[id];});
+  Object.keys(d.checks||{}).forEach(function(id){var el=document.getElementById(id);if(el)el.checked=!!d.checks[id];});
+  if(d.releaseType){var btn=document.querySelector('.rt-btn[data-rt="'+d.releaseType+'"]');if(btn)selectRT(btn);}
+  if(d.fdUrls&&d.fdUrls.length){
+    try{
+      var need=d.fdUrls.length;var have=document.querySelectorAll('.fd-url-input').length;
+      for(var i=have;i<need;i++){if(typeof addURL==='function')addURL();}
+      var inputs=document.querySelectorAll('.fd-url-input');
+      d.fdUrls.forEach(function(u,j){if(inputs[j])inputs[j].value=u;});
+    }catch(e){}
+  }
+  if(d.images&&d.images.length){
+    selectedImages=d.images.map(function(im){return {file:dataURLtoFile(im.dataUrl,im.name||'image.png'),dataUrl:im.dataUrl};}).filter(function(x){return x.file;});
+    renderScreenshotThumbs();
+  }
+  try{updateFdUrlLabel();}catch(e){}
+  try{updateGenerateBtn();}catch(e){}
+}
+function resumeDraft(){
+  var d=window.__pendingDraft;if(!d)return;
+  window.__restoring=true;
+  try{restoreDraft(d);}catch(e){}
+  window.__restoring=false;
+  var b=document.getElementById('draft-banner');if(b)b.style.display='none';
+  document.getElementById('step0').classList.add('hidden');
+  document.getElementById('prog').classList.remove('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+}
+function discardDraft(){clearDraft();window.__pendingDraft=null;var b=document.getElementById('draft-banner');if(b)b.style.display='none';}
+function initDraft(){
+  var raw=null;try{raw=localStorage.getItem(DRAFT_KEY);}catch(e){}
+  if(raw){
+    try{
+      var d=JSON.parse(raw);window.__pendingDraft=d;
+      var when=d.savedAt?new Date(d.savedAt):null;
+      var lbl=when?('from '+when.toLocaleDateString()+' '+when.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})):'';
+      var w=document.getElementById('draft-when');if(w)w.textContent=lbl;
+      var b=document.getElementById('draft-banner');if(b)b.style.display='flex';
+    }catch(e){}
+  }
+  document.addEventListener('input',scheduleSave,true);
+  document.addEventListener('change',scheduleSave,true);
+  window.__draftReady=true;
+}
+
 // --- SCREENSHOTS ---
 function onImagesPicked(e){
   var files=Array.from(e.target.files||[]);
@@ -470,6 +586,7 @@ function renderScreenshotThumbs(){
   });
   var btn=document.getElementById('add-screenshot-btn');
   if(btn) btn.style.display=selectedImages.length>=MAX_IMAGES?'none':'';
+  scheduleSave();
 }
 function removeScreenshot(idx){
   selectedImages.splice(idx,1);
@@ -705,6 +822,7 @@ function selectRT(el){
   releaseType=el.dataset.rt;
   updateAccessChecks();
   updateFdUrlLabel();
+  scheduleSave();
 }
 function updateAccessChecks(){
   var wrap=document.getElementById('access-checks');
@@ -1061,6 +1179,7 @@ function copyOut(){
 }
 function regenerate(){document.getElementById('output').classList.remove('show');generate();}
 function restart(){
+  clearDraft();
   releaseType='ga';docs={};
   document.querySelectorAll('.rt-btn').forEach(function(b){b.classList.remove('selected');});
   document.querySelector('.rt-btn[data-rt="ga"]').classList.add('selected');
@@ -1133,11 +1252,13 @@ function handleSubmitResponse(msg) {
     return;
   }
   if (msg.freshdeskArticle) docs.freshdesk = msg.freshdeskArticle;
+  clearDraft();
   document.getElementById('loading').classList.remove('show');
   document.getElementById('loading').classList.add('hidden');
   buildOutputTabs(releaseType);
   document.getElementById('output').classList.add('show');
 }
+try{ if(document.readyState!=='loading'){ initDraft(); } else { document.addEventListener('DOMContentLoaded', initDraft); } }catch(e){}
 </script>
 <iframe name="agent-bridge" id="agent-bridge" style="display:none"></iframe>
 </body></html>
