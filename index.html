@@ -260,10 +260,6 @@ textarea.l{min-height:200px;line-height:1.6;}
         <textarea class="s" id="f-commercial" placeholder="Impact and relevance for Sales, CS, PS: deals unlocked, adoption opportunities, competitive positioning..."></textarea>
         <div class="fh"><strong>Internal only.</strong> Never appears in customer-facing output. Helps Sales, CS, and PMM position and communicate the release.</div>
       </div>
-      <div class="field-group">
-        <div class="fl">Other information (optional)</div>
-        <textarea class="s" id="f-other" placeholder="Migration notes, setup required, rollout order, dependencies, follow-up planned..."></textarea>
-      </div>
       <div class="divider"></div>
       <div class="sec-label">Resources &amp; links</div>
       <div class="field-group">
@@ -434,7 +430,7 @@ var selectedImages=[]; // [{file:File, dataUrl:string}]
 
 // --- DRAFTS (saved in this browser via localStorage) ---
 var DRAFT_KEY='release-agent-draft-v1';
-var DRAFT_FIELDS=['prefill-input','f-title','f-version','f-problem','f-what','f-limits','f-whom','f-tier','f-team','f-commercial','f-other','f-apidoc','f-credits','f-postedby','f-coordination'];
+var DRAFT_FIELDS=['prefill-input','f-title','f-version','f-problem','f-what','f-limits','f-whom','f-tier','f-team','f-commercial','f-apidoc','f-credits','f-postedby','f-coordination'];
 var DRAFT_CHECKS=['chk-internal','chk-beta-internal','chk-beta-customers','chk-ga-internal','chk-ga-customers'];
 var __saveTimer=null;
 function collectDraft(){
@@ -896,7 +892,7 @@ function generate(){
     title:v('f-title'),version:v('f-version'),
     problem:v('f-problem'),what:v('f-what'),
     limits:v('f-limits'),whom:v('f-whom'),
-    commercial:v('f-commercial'),other:v('f-other'),
+    commercial:v('f-commercial'),
     releaseType:releaseType,
     fdUrls:getFDUrls(),
     apidoc:v('f-apidoc'),credits:v('f-credits'),
@@ -1186,7 +1182,7 @@ function restart(){
   ['chk-internal','chk-beta-internal','chk-beta-customers','chk-ga-internal','chk-ga-customers'].forEach(function(id){document.getElementById(id).checked=false;});
   document.getElementById('access-checks').style.display='none';
   document.getElementById('f-tier').value='';
-  ['f-title','f-version','f-problem','f-what','f-limits','f-whom','f-commercial','f-other','f-apidoc','f-credits','f-postedby','f-coordination'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['f-title','f-version','f-problem','f-what','f-limits','f-whom','f-commercial','f-apidoc','f-credits','f-postedby','f-coordination'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('f-team').value='';
   var fdUrls=document.getElementById('fd-urls');
   fdUrls.innerHTML='<div class="url-row"><input type="text" placeholder="https://mysupport.simployer.com/..." class="fd-url-input"/><button class="url-add-btn" onclick="addURL()">+ Add another</button></div>';
@@ -1261,5 +1257,4 @@ function handleSubmitResponse(msg) {
 try{ if(document.readyState!=='loading'){ initDraft(); } else { document.addEventListener('DOMContentLoaded', initDraft); } }catch(e){}
 </script>
 <iframe name="agent-bridge" id="agent-bridge" style="display:none"></iframe>
-</body><!-- deploy: git-connected build -->
-</html>
+</body></html>
